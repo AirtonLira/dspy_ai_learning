@@ -1,32 +1,18 @@
-
 import dspy
-from domain.module.sentiment import SentimentClassifier
+from domain.evaluation.sentiment_eval import run_evaluation
 
 
+def main():
+    llm = dspy.LM(
+        model="ollama/glm4:9b-chat-q5_0",
+        chat=True,
+        max_tokens=256
+    )
 
-llm = dspy.LM(
-    model="ollama/smollm2:1.7b",
-    max_tokens=256,
-    chat=True  
-)
+    dspy.settings.configure(lm=llm)
 
-
-dspy.settings.configure(lm=llm)
+    run_evaluation()
 
 
 if __name__ == "__main__":
-    classifier = SentimentClassifier()
-
-    examples = [
-        "Eu amo este produto, é incrível!",
-        "Esta é a pior experiência que já tive.",
-        "O serviço foi ok, nada de especial.",
-        "Equipe de suporte absolutamente fantástica!",
-        "Eu odeio isso, total desperdício de dinheiro."
-    ]
-
-    for text in examples:
-        result = classifier(text=text)
-        print(f"Texto: {text}")
-        print(f"Sentimento: {result.sentiment}")
-        print("-" * 50)
+    main()
