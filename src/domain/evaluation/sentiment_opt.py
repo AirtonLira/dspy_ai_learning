@@ -12,6 +12,9 @@ def run_optimization():
    base_program = SentimentClassifier()
    dataset = sentiment_dataset()
    
+   if not dataset:
+       print("Erro: Dataset vazio!")
+       return base_program
    
    # Otimizador
    optimzer = dspy.BootstrapFewShot(

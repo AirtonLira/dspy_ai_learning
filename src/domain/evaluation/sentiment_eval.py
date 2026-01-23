@@ -6,7 +6,8 @@ from domain.evaluation.logger import log_result
 
 # Dataset de avaliação
 def sentiment_dataset():
-    return load_b2w_reviews(limit=int(os.getenv("LIMIT_DATASET_EVAL")))
+    limit = os.getenv("LIMIT_DATASET_EVAL")
+    return load_b2w_reviews(limit=int(limit) if limit else None)
 
 
 # Métrica de avaliação

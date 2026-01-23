@@ -1,5 +1,6 @@
 import requests
 from pathlib import Path
+from domain.dataset.schema import RawB2WColumns, NormalizedReview
 
 
 B2W_REVIEWS_URL = (

@@ -1,7 +1,10 @@
 import dspy
 import os
+from dotenv import load_dotenv
 from domain.evaluation.sentiment_eval import run_evaluation
 from domain.evaluation.sentiment_opt import run_optimization
+
+load_dotenv()
 
 
 def main():
@@ -26,7 +29,7 @@ def main():
 
     dspy.settings.configure(lm=llm)
 
-    run_evaluation()
+    #run_evaluation()
     run_optimization()
 
 
