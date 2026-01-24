@@ -10,6 +10,7 @@ class LLMConfig:
         """Retorna a conexão com o LLM em memória (Singleton)."""
         if cls._instance is None:
             
+            gemini_api_key = os.getenv("GOOGLE_API_KEY")
             llm_local_mode = os.getenv("DSPY_AI_LOCAL_MODE", "false").lower()
             if llm_local_mode == "true":
                 llm = dspy.LM(
@@ -19,15 +20,22 @@ class LLMConfig:
                     local_mode=True
                 )
                 print("Usando modelo local (Ollama GLM4).")
+            elif gemini_api_key:
+                llm = dspy.LM(
+                    model="gemini/gemini-2.5-flash",
+                    api_key=gemini_api_key,
+                    chat=True,
+                    max_tokens=2048
+                )
+                print("Usando modelo remoto (Google Gemini Pro).")
             else:
                 llm = dspy.LM(
                     model="openrouter/liquid/lfm-2.5-1.2b-instruct:free",
-                    api_base="https://openrouter.ai/api/v1",
                     api_key=os.getenv("OPENROUTER_API_KEY"),
                     chat=True,
                     max_tokens=256
                 )
-            print("Usando modelo remoto (Liquid LFM 2.5).")
+                print("Usando modelo remoto (Liquid LFM 2.5).")
             
             print(f"--- Inicializando conexão com Ollama ({model}) ---")
             cls._instance = llm
