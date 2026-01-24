@@ -22,7 +22,7 @@ class RateLimiter:
             return gemini.generate(...)
     """
     
-    def __init__(self, max_requests=5, window_seconds=60):
+    def __init__(self, max_requests=5, window_seconds=30):
         """
         Args:
             max_requests: Máximo de requisições na janela (padrão: 5)
@@ -54,12 +54,7 @@ class RateLimiter:
                 wait_time = (self.requests[0] + timedelta(seconds=self.window_seconds) - now).total_seconds()
                 
                 if wait_time > 0:
-<<<<<<< HEAD
                     print(f"Rate limit. Aguardando {wait_time:.1f}s...")
-=======
-                    print(f"\n⏳ Rate limit atingido ({self.max_requests} req em {self.window_seconds}s)")
-                    print(f"   Aguardando {wait_time:.1f}s antes da próxima requisição...")
->>>>>>> b1392ca (Refactor RateLimiter class; enhance documentation, improve error handling, and implement exponential backoff for retries)
                     time.sleep(wait_time + 0.1)  # +0.1s de margem
                     return wait_time
             
@@ -121,26 +116,3 @@ class RateLimiter:
 
 # Singleton global para usar em qualquer lugar
 gemini_rate_limiter = RateLimiter(max_requests=5, window_seconds=60)
-
-
-if __name__ == "__main__":
-    # Teste do rate limiter
-    print("\n" + "="*60)
-    print("🧪 TESTE: RateLimiter com Gemini")
-    print("="*60)
-    
-    @gemini_rate_limiter
-    def fake_api_call(call_num: int):
-        print(f"   ✅ Chamada {call_num} executada em {datetime.now().strftime('%H:%M:%S')}")
-        return f"Result {call_num}"
-    
-    print("\nFazendo 7 chamadas rápidas (máx 5/min, então 6ª e 7ª devem aguardar):\n")
-    
-    for i in range(1, 8):
-        try:
-            result = fake_api_call(i)
-            print(f"   Resultado: {result}")
-        except Exception as e:
-            print(f"   ❌ Erro: {e}")
-    
-    print("\n" + "="*60 + "\n")
