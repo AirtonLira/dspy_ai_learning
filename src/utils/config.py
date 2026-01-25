@@ -22,12 +22,12 @@ class LLMConfig:
                 print("Usando modelo local (Ollama GLM4).")
             elif gemini_api_key:
                 llm = dspy.LM(
-                    model="gemini/gemini-2.5-flash",
+                    model="gemini/gemini-3-flash-preview",
                     api_key=gemini_api_key,
                     chat=True,
                     max_tokens=2048
                 )
-                print("Usando modelo remoto (Google Gemini Pro).")
+                print("Usando modelo remoto (Google Gemini).")
             else:
                 llm = dspy.LM(
                     model="openrouter/liquid/lfm-2.5-1.2b-instruct:free",

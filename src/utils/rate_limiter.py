@@ -22,7 +22,7 @@ class RateLimiter:
             return gemini.generate(...)
     """
     
-    def __init__(self, max_requests=5, window_seconds=30):
+    def __init__(self, max_requests=5, window_seconds=60):
         """
         Args:
             max_requests: Máximo de requisições na janela (padrão: 5)
@@ -32,7 +32,7 @@ class RateLimiter:
         self.window_seconds = window_seconds
         self.requests = deque()  # Fila de timestamps
         self.lock = threading.Lock()
-        print(f"\n🚀 RateLimiter inicializado: {max_requests} req/{window_seconds}s")
+        print(f"\n RateLimiter inicializado: {max_requests} req/{window_seconds}s")
     
     def wait_if_needed(self) -> float:
         """
@@ -76,7 +76,7 @@ class RateLimiter:
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             max_retries = 5
-            retry_delay = 2  # Começa com 2 segundos
+            retry_delay = 4  #
             
             for attempt in range(1, max_retries + 1):
                 try:
@@ -99,7 +99,7 @@ class RateLimiter:
                     
                     # Retry se for rate limit e ainda temos tentativas
                     if is_rate_limit and attempt < max_retries:
-                        print(f"\n⚠️  Tentativa {attempt}/{max_retries}: Rate limit detectado")
+                        print(f"\n Tentativa {attempt}/{max_retries}: Rate limit detectado")
                         print(f"   Aguardando {retry_delay}s antes do retry...")
                         time.sleep(retry_delay)
                         retry_delay *= 2  # Exponential backoff: 2, 4, 8, 16...
@@ -115,4 +115,4 @@ class RateLimiter:
 
 
 # Singleton global para usar em qualquer lugar
-gemini_rate_limiter = RateLimiter(max_requests=5, window_seconds=60)
+gemini_rate_limiter = RateLimiter(max_requests=3, window_seconds=60)

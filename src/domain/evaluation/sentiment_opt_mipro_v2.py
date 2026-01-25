@@ -1,7 +1,7 @@
 import dspy
 from dspy.teleprompt import MIPROv2
 from domain.module.sentiment import SentimentClassifier
-from utils.rate_limiter import rate_limiter
+from utils.rate_limiter import gemini_rate_limiter
 from domain.evaluation.sentiment_eval import (
     sentiment_dataset,
 )
@@ -32,14 +32,14 @@ class SentimentMiproManager:
         return example.sentiment.lower() == pred.sentiment.lower()
 
 
-    @rate_limiter
+    @gemini_rate_limiter
     def run_mipro_optimization(self,num_candidates=3):
         
         teleprompter = MIPROv2(
                 prompt_model=dspy.settings.lm, 
                 task_model=dspy.settings.lm, 
-                metric=self._metric, 
-                auto="medium"
+                metric=self._metric,            
+                auto="light"
             )
         
         compiled_program = teleprompter.compile(

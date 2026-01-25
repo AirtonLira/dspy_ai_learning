@@ -1,0 +1,28 @@
+{
+  "predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Classifica o sentimento de um texto.",
+      "fields": [
+        {
+          "prefix": "Text:",
+          "description": "Texto a ser analisado"
+        },
+        {
+          "prefix": "Sentiment:",
+          "description": "retornar somente positivo ou negativo"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.12",
+      "dspy": "3.1.2",
+      "cloudpickle": "3.1"
+    }
+  }
+}
