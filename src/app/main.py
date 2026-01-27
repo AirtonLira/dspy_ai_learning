@@ -1,7 +1,4 @@
-import dspy
-import os
 from dotenv import load_dotenv
-from domain.evaluation.sentiment_eval import run_evaluation
 from domain.evaluation.sentiment_opt_fewshot import run_optimization
 from domain.evaluation.sentiment_opt_mipro_v2 import SentimentMiproManager
 from utils.config import setup_llm
