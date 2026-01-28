@@ -12,3 +12,6 @@ Para rodar como um módulo( E
 
 upgrade no dspy-ai:
 - uv pip install "dspy-ai>=3.0.2"
+
+Adentrar ao ambiente .vnev
+- source .venv/bin/activate
