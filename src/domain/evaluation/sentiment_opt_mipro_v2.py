@@ -3,10 +3,8 @@ from dspy.teleprompt import MIPROv2
 from domain import dataset
 from domain.module.sentiment import SentimentClassifier
 from utils.rate_limiter import gemini_rate_limiter
-from domain.evaluation.sentiment_eval import (
-    sentiment_accuracy,
-    sentiment_dataset_train,
-)
+
+
 from pathlib import Path
 from domain.evaluation.logger import log_result
 from dspy.evaluate import Evaluate
