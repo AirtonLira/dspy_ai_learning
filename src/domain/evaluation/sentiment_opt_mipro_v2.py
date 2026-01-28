@@ -5,7 +5,7 @@ from domain.module.sentiment import SentimentClassifier
 from utils.rate_limiter import gemini_rate_limiter
 from domain.evaluation.sentiment_eval import (
     sentiment_accuracy,
-    sentiment_dataset,
+    sentiment_dataset_train,
 )
 from pathlib import Path
 from domain.evaluation.logger import log_result
@@ -20,7 +20,7 @@ RESULTS_FILE = RESULTS_DIR
 class SentimentMiproManager:
     def __init__(self):
         
-        dataset = sentiment_dataset()
+        dataset = sentiment_dataset_train()
         self.base_program = SentimentClassifier()
 
         if not dataset:
@@ -69,6 +69,8 @@ class SentimentMiproManager:
             display_progress=True,
             display_table=False
         )
+
+
         
         result_score = evaluator(self.compiled_program)
         

@@ -1,14 +1,22 @@
 import os
 from time import sleep
 from domain.module.sentiment import SentimentClassifier
-from domain.dataset.b2w_review import load_b2w_reviews
+from domain.dataset.b2w_review import B2WReviews
 from domain.evaluation.logger import log_result
 
 # Dataset de avaliação
-def sentiment_dataset():
+def get_train_test_split_data():
     limit = os.getenv("LIMIT_DATASET_EVAL")
-    return load_b2w_reviews(limit=int(limit) if limit else None)
+    b2w_reviews = B2WReviews(sample=int(limit) if limit else None)
+    return b2w_reviews.get_train_test_split()
 
+def sentiment_dataset_train():
+    train_set, _ = get_train_test_split_data()
+    return train_set
+
+def sentiment_dataset_test():
+    _, test_set = get_train_test_split_data()
+    return test_set
 
 # Métrica de avaliação
 def sentiment_accuracy(example, prediction, trace=None):
@@ -23,7 +31,7 @@ def sentiment_accuracy(example, prediction, trace=None):
 
 def run_evaluation():
     classifier = SentimentClassifier()
-    dataset = sentiment_dataset()
+    dataset = sentiment_dataset_test()
 
     scores = []
     print("Iniciando avaliação de sentimento...")

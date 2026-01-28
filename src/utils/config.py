@@ -15,6 +15,9 @@ class LLMConfig:
             if llm_local_mode == "true":
                 llm = dspy.LM(
                     model="ollama/glm4:9b-chat-q3_K_M",
+                    
+                    
+        
                     chat=True,
                     max_tokens=256,
                     local_mode=True
@@ -45,3 +48,8 @@ class LLMConfig:
 # Atalho para facilitar o uso
 def setup_llm():
     return LLMConfig.get_instance()
+
+def get_data_path():
+    # The path to the src directory
+    src_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(src_dir, 'domain', 'dataset', 'data', 'b2w_reviews.csv')

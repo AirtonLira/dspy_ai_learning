@@ -1,7 +1,7 @@
 import dspy
 from domain.module.sentiment import SentimentClassifier
 from domain.evaluation.sentiment_eval import (
-    sentiment_dataset,
+    sentiment_dataset_train,
     sentiment_accuracy,
 )
 from domain.evaluation.logger import log_result
@@ -10,7 +10,7 @@ def run_optimization():
     
    # Pipeline original
    base_program = SentimentClassifier()
-   dataset = sentiment_dataset()
+   dataset = sentiment_dataset_train()
    
    if not dataset:
        print("Erro: Dataset vazio!")
