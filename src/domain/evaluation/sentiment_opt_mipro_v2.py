@@ -20,7 +20,7 @@ RESULTS_FILE = RESULTS_DIR
 class SentimentMiproManager:
     def __init__(self):
         
-        dataset = sentiment_dataset_train()
+        dataset = sentiment_d taset_train()
         self.base_program = SentimentClassifier()
 
         if not dataset:

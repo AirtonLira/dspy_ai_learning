@@ -1,7 +1,6 @@
 import dspy
 import os
 
-
 class LLMConfig:
     _instance = None
 
@@ -16,7 +15,7 @@ class LLMConfig:
                 llm = dspy.LM(
                     model="ollama/glm4:9b-chat-q3_K_M",
                     
-                    
+
         
                     chat=True,
                     max_tokens=256,
