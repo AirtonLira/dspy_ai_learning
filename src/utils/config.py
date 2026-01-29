@@ -14,9 +14,6 @@ class LLMConfig:
             if llm_local_mode == "true":
                 llm = dspy.LM(
                     model="ollama/glm4:9b-chat-q3_K_M",
-                    
-
-        
                     chat=True,
                     max_tokens=256,
                     local_mode=True
@@ -24,12 +21,13 @@ class LLMConfig:
                 print("Usando modelo local (Ollama GLM4).")
             elif gemini_api_key:
                 llm = dspy.LM(
-                    model="gemini/gemini-3-flash-preview",
+                    model="gemini/gemini-1.5-flash",
                     api_key=gemini_api_key,
                     chat=True,
-                    max_tokens=2048
+                    max_tokens=2048,
+                    api_version="v1"
                 )
-                print("Usando modelo remoto (Google Gemini).")
+                print("Usando modelo remoto (Google Gemini 1.5 Flash - v1).")
             else:
                 llm = dspy.LM(
                     model="openrouter/liquid/lfm-2.5-1.2b-instruct:free",
@@ -39,16 +37,14 @@ class LLMConfig:
                 )
                 print("Usando modelo remoto (Liquid LFM 2.5).")
             
-            print(f"--- Inicializando conexão com Ollama ({model}) ---")
+            print(f"--- Inicializando conexao com Ollama ({model}) ---")
             cls._instance = llm
             dspy.settings.configure(lm=cls._instance)
         return cls._instance
 
-# Atalho para facilitar o uso
 def setup_llm():
     return LLMConfig.get_instance()
 
 def get_data_path():
-    # The path to the src directory
     src_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(src_dir, 'domain', 'dataset', 'data', 'b2w_reviews.csv')

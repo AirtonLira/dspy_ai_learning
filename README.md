@@ -1,7 +1,5 @@
 
 
-
-
 ## Comandos auxiliares:
 
 Para rodar o projeto python:
@@ -15,3 +13,8 @@ upgrade no dspy-ai:
 
 Adentrar ao ambiente .vnev
 - source .venv/bin/activated
+
+
+
+## Localidade do projeto:
+\\wsl.localhost\Ubuntu-24.04\home\airtonlirajr\Estudos
