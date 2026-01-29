@@ -2,6 +2,10 @@ from dotenv import load_dotenv
 from domain.evaluation.sentiment_opt_fewshot import run_optimization
 from domain.evaluation.sentiment_opt_mipro_v2 import SentimentMiproManager
 from utils.config import setup_llm
+import warnings
+warnings.filterwarnings("ignore")
+
+
 
 load_dotenv()
 

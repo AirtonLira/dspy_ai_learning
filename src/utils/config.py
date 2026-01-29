@@ -1,5 +1,6 @@
 import dspy
 import os
+from utils.rate_limiter import gemini_rate_limiter
 
 class LLMConfig:
     _instance = None
@@ -10,18 +11,16 @@ class LLMConfig:
         if cls._instance is None:
             
             gemini_api_key = os.getenv("GOOGLE_API_KEY")
-            llm_local_mode = os.getenv("DSPY_AI_LOCAL_MODE", "false").lower()
+            llm_local_mode = os.getenv("DSPY_AI_LOCAL_MODE").lower()
             if llm_local_mode == "true":
                 llm = dspy.LM(
-                    model="ollama/glm4:9b-chat-q3_K_M",
-                    
-
-        
+                    model="ollama/llama3.2:1b",
                     chat=True,
-                    max_tokens=256,
+                    max_tokens=20, # Reduzido para evitar conversas longas
+                    temperature=0.0, # Mais determinístico
                     local_mode=True
                 )
-                print("Usando modelo local (Ollama GLM4).")
+                print("Usando modelo local (Ollama Llama3.2).")
             elif gemini_api_key:
                 llm = dspy.LM(
                     model="gemini/gemini-3-flash-preview",
@@ -30,7 +29,7 @@ class LLMConfig:
                     max_tokens=2048
                 )
                 print("Usando modelo remoto (Google Gemini).")
-            else:
+            elif llm_local_mode == "false":
                 llm = dspy.LM(
                     model="openrouter/liquid/lfm-2.5-1.2b-instruct:free",
                     api_key=os.getenv("OPENROUTER_API_KEY"),
@@ -38,8 +37,18 @@ class LLMConfig:
                     max_tokens=256
                 )
                 print("Usando modelo remoto (Liquid LFM 2.5).")
+
             
-            print(f"--- Inicializando conexão com Ollama ({model}) ---")
+            # Aplicar Rate Limit diretamente no método __call__ do LM
+            # Isso garante que todas as chamadas do DSPy passem pelo limitador
+            original_call = llm.__call__
+            
+            @gemini_rate_limiter
+            def rate_limited_call(*args, **kwargs):
+                return original_call(*args, **kwargs)
+            
+            llm.__call__ = rate_limited_call
+            
             cls._instance = llm
             dspy.settings.configure(lm=cls._instance)
         return cls._instance
