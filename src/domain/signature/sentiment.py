@@ -1,4 +1,5 @@
 import dspy
+from typing import Literal
 
 class SentimentSignature(dspy.Signature):
     """Classifique o sentimento do review em: positivo, negativo ou neutro."""
