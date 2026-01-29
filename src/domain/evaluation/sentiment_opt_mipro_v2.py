@@ -1,6 +1,9 @@
 import dspy
 from dspy.teleprompt import MIPROv2
-from domain import dataset
+from domain.evaluation.sentiment_eval import (
+    sentiment_dataset_train,
+    sentiment_accuracy,
+)
 from domain.module.sentiment import SentimentClassifier
 from utils.rate_limiter import gemini_rate_limiter
 
@@ -18,12 +21,13 @@ RESULTS_FILE = RESULTS_DIR
 class SentimentMiproManager:
     def __init__(self):
         
-        dataset = sentiment_d taset_train()
+        dataset = sentiment_dataset_train()
         self.base_program = SentimentClassifier()
 
         if not dataset:
             print("Erro: Dataset vazio!")
-            return None
+            self.trainset = []
+            return
         
         self.trainset = dataset
         # Instanciando sua classe real do repositório
@@ -31,17 +35,18 @@ class SentimentMiproManager:
 
     def _metric(self, example, pred, trace=None):
         # Baseado nos campos sentiment e answer definidos nas assinaturas
-        return example.sentiment.lower() == pred.sentiment.lower()
+        return sentiment_accuracy(example, pred)
 
 
-    @gemini_rate_limiter
+
     def run_mipro_optimization(self,num_candidates=3):
         
         teleprompter = MIPROv2(
                 prompt_model=dspy.settings.lm, 
                 task_model=dspy.settings.lm, 
                 metric=self._metric,            
-                auto="light"
+                auto="light",
+                num_threads=1
             )
         
         compiled_program = teleprompter.compile(
@@ -64,6 +69,7 @@ class SentimentMiproManager:
         evaluator = Evaluate(
             devset=testset,
             metric=self._metric,
+            num_threads=1, # Desativar threads para o rate limit funcionar corretamente
             display_progress=True,
             display_table=False
         )
@@ -89,7 +95,9 @@ class SentimentMiproManager:
         
     def save_checkpoint(self, filename="sentiment_mipro_final.json"):
             if self.compiled_program:
-                self.compiled_program.save(RESULTS_FILE.parent / "results/" / filename)
+                save_path = RESULTS_DIR / filename
+                self.compiled_program.save(str(save_path))
+                print(f"Modelo otimizado salvo em: {save_path}")
                 
     def _show_example_prediction(self):
         """Mostra um exemplo de predição"""
@@ -100,10 +108,10 @@ class SentimentMiproManager:
         
         print("\n EXEMPLO DE PREDIÇÃO:")
         print("="*60)
-        print(f"Texto: {example.text}")
+        print(f"Texto: {example.review_text}")
         
         # 
-        prediction = self.compiled_program(text=example.text)
+        prediction = self.compiled_program(text=example.review_text)
         
         print(f"Sentimento real: {example.sentiment}")
         print(f"Sentimento previsto: {prediction.sentiment}")
@@ -114,7 +122,7 @@ class SentimentMiproManager:
         
         scores = []
         for example in self.trainset:
-            prediction = self.compiled_program(text=example.text)
+            prediction = self.compiled_program(text=example.review_text)
             score = sentiment_accuracy(example, prediction)
             scores.append(score)
 

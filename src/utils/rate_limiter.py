@@ -115,4 +115,5 @@ class RateLimiter:
 
 
 # Singleton global para usar em qualquer lugar
-gemini_rate_limiter = RateLimiter(max_requests=3, window_seconds=60)
+# Gemini free tier é instável, vamos usar 2 req/min para garantir
+gemini_rate_limiter = RateLimiter(max_requests=2, window_seconds=60)
