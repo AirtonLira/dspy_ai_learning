@@ -50,7 +50,13 @@ class LLMConfig:
             llm.__call__ = rate_limited_call
             
             cls._instance = llm
-            dspy.settings.configure(lm=cls._instance)
+            dspy.settings.configure(
+                lm=cls._instance,
+                adapter=dspy.JSONAdapter,
+                # força tentativa de JSON estrito se o backend suportar
+                is_json=True
+            )
+            
         return cls._instance
 
 # Atalho para facilitar o uso
