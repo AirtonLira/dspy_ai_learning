@@ -37,7 +37,7 @@ class LLMConfig:
                 )
                 print("Usando modelo remoto (Liquid LFM 2.5).")
             
-            print(f"--- Inicializando conexão com Ollama ({model}) ---")
+            print(f"--- Inicializando conexão ---")
         
             dspy.settings.configure(lm=llm)
             cls._instance = llm

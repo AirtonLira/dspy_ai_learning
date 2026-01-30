@@ -34,7 +34,7 @@ class SentimentMiproManager:
         return example.sentiment.lower() == pred.sentiment.lower()
 
 
-    def run_mipro_optimization(self, num_candidates: int = 3):
+    def run_mipro_optimization(self, num_candidates: int = 2):
         """Executa otimização MIPRO"""
         
         # Verificar se o LM foi configurado
@@ -48,15 +48,19 @@ class SentimentMiproManager:
             metric=self._metric,
             prompt_model=dspy.settings.lm,  # Modelo para gerar prompts
             task_model=dspy.settings.lm,    # Modelo para executar tarefas
-            auto="medium"
+            auto="light",
+            max_bootstrapped_demos=2,
+            max_labeled_demos=2,
+            num_threads=1,
+            verbose=False
         )
         
         # Compilar programa
         compiled_program = teleprompter.compile(
             self.base_program,
             trainset=self.trainset,
-            max_bootstrapped_demos=0,
-            max_labeled_demos=0
+            max_bootstrapped_demos=2,
+            max_labeled_demos=4
         )
         
         self.compiled_program = compiled_program

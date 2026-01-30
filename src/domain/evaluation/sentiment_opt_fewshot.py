@@ -37,11 +37,11 @@ def run_optimization():
        score = sentiment_accuracy(example, prediction)
        scores.append(score)
    
-    #    print("Texto:", example.text)
-    #    print("Esperado:", example.sentiment)
-    #    print("Predito :", prediction.sentiment)
-    #    print("Score   :", score)
-    #    print("-" * 50)
+       print("Texto:", example.text)
+       print("Esperado:", example.sentiment)
+       print("Predito :", prediction.sentiment)
+       print("Score   :", score)
+       print("-" * 50)
        
    accuracy = sum(scores) / len(scores)
    log_result(
@@ -53,5 +53,27 @@ def run_optimization():
         notes="baseline"
     )
    print(f"Acurácia final (otimizada): {accuracy:.2f}")
+   
+   print("\n=== Exemplos Selecionados pelo Otimizador ===\n")
+
+   # O SentimentClassifier geralmente tem um predictor interno (ou ChainOfThought)
+   # Acessamos o predictor para ver os exemplos que ele 'aprendeu'
+   for i, demo in enumerate(optimized_program.predict.demos):
+       print(f"Exemplo {i+1}:")
+       print(f"Texto: {demo.text}")
+       print(f"Sentimento: {demo.sentiment}")
+       print("-" * 20)
+       
+   print("\n=== Exemplo de Prompt enviado ao LLM ===\n")
+   
+   
+   # Acessa todos os prompts feitos desde que o script começou
+   history = dspy.settings.lm.history  
+   
+   print(f"O otimizador realizou {len(history)} chamadas ao modelo.")  
+   # Ver o primeiro prompt que ele tentou no treino
+   if history:
+        print("Primeiro prompt de treino:", history[0]['prompt'])
+        print("Resposta do modelo:", history[0]['response'])
     
    return optimized_program

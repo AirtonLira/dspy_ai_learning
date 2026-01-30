@@ -69,4 +69,5 @@ Adentrar ao ambiente .venv
 
 ---
 Feito com vontade por Airton Junior
+OBS: Projeto desenvolvido no Ubuntu 24.04 através do WSL2
 https://www.linkedin.com/in/airton-lira-junior-6b81a661/

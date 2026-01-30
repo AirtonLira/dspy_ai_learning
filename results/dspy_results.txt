@@ -1,2 +1,6 @@
 2026-01-23T21:19:46.070294;evaluation;accuracy;0.8000;50;ollama/llama3.1;baseline
 2026-01-23T23:17:37.104100;evaluation_optimized;accuracy;0.9200;50;ollama/llama3.1;baseline
+2026-01-30T14:26:45.902211;evaluation_optimized;accuracy;0.7692;78;ollama/llama3.1;baseline
+2026-01-30T14:39:47.780098;evaluation_optimized;accuracy;0.7949;78;ollama/llama3.1;baseline
+2026-01-30T14:49:11.012788;evaluation_optimized;accuracy;0.7949;78;ollama/llama3.1;baseline
+2026-01-30T14:51:24.811982;evaluation_optimized;accuracy;0.7949;78;ollama/llama3.1;baseline
