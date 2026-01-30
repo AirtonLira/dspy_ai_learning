@@ -48,7 +48,7 @@ class SentimentMiproManager:
             metric=self._metric,
             prompt_model=dspy.settings.lm,  # Modelo para gerar prompts
             task_model=dspy.settings.lm,    # Modelo para executar tarefas
-            auto="light"
+            auto="medium"
         )
         
         # Compilar programa
@@ -66,7 +66,7 @@ class SentimentMiproManager:
         evaluator = Evaluate(
             devset=self.testset,
             metric=self._metric,
-            num_threads=1,
+            num_threads=4,
             display_progress=True,
             display_table=False,
         )

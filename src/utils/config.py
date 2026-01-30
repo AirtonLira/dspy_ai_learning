@@ -11,7 +11,7 @@ class LLMConfig:
         if cls._instance is None:
             
             gemini_api_key = os.getenv("GOOGLE_API_KEY")
-            llm_local_mode = os.getenv("DSPY_AI_LOCAL_MODE", "false").lower()
+            llm_local_mode = os.getenv("DSPY_AI_LOCAL_MODE").lower()
             if llm_local_mode == "true":
                 llm = dspy.LM(
                     model="ollama/qwen2.5:0.5b",
