@@ -34,65 +34,47 @@ class SentimentMiproManager:
         return example.sentiment.lower() == pred.sentiment.lower()
 
 
-    def run_mipro_optimization(self, num_candidates=3):
-        # Carregar configurações de throttling/execução via env vars (podem ser ajustadas)
-        dry_run = os.getenv("DSPY_MIPRO_DRY_RUN", "false").lower() == "true"
-
-        print(f"MIPROv2 config -> dry_run={dry_run}, rate_limit: 1 req/60s")
-
-        if dry_run:
-            print("Dry-run ativado: pulando otimização pesada do MIPROv2.")
-            return None
-
-        # MIPROv2 com configuração minimalista para reduzir chamadas à API
+    def run_mipro_optimization(self, num_candidates: int = 3):
+        """Executa otimização MIPRO"""
+        
+        # Verificar se o LM foi configurado
+        if not dspy.settings.lm:
+            raise ValueError("LM não configurado! Chame setup_llm() primeiro.")
+        
+        print(f"\n{'='*60}")
+        
+        # Configurar MIPRO com os modelos explícitos
         teleprompter = MIPROv2(
-                prompt_model=dspy.settings.lm,
-                task_model=dspy.settings.lm,
-                metric=self._metric,
-                auto="light"
-            )
-
-        compiled_program = teleprompter.compile(
-                self.base_program,
-                trainset=self.trainset,
-                max_bootstrapped_demos=0,
-                max_labeled_demos=0
+            metric=self._metric,
+            prompt_model=dspy.settings.lm,  # Modelo para gerar prompts
+            task_model=dspy.settings.lm,    # Modelo para executar tarefas
+            auto="light"
         )
         
+        # Compilar programa
+        compiled_program = teleprompter.compile(
+            self.compiled_program,
+            trainset=self.trainset,
+            max_bootstrapped_demos=0,
+            max_labeled_demos=0
+        )
         
         self.compiled_program = compiled_program
-
-        print("\n Avaliando programa otimizado...")
-        
-        # Criar testset (últimos 10% do dataset)
-        split_point = int(len(self.trainset) * 0.9)
-        testset = self.trainset[split_point:]
         
         # Avaliar
+        print("\n Avaliando programa otimizado...")
         evaluator = Evaluate(
-            devset=testset,
+            devset=self.testset,
             metric=self._metric,
+            num_threads=1,
             display_progress=True,
-            display_table=False
+            display_table=False,
         )
-
-
         
-        result_score = evaluator(self.compiled_program)
+        accuracy = evaluator(self.compiled_program)
+        print(f"\n Acurácia no testset: {accuracy:.2%}\n")
         
-        #Acessar o score dentro do resultado
-        if hasattr(result_score, 'score'):
-            score = result_score.score
-        elif isinstance(result_score, (int, float)):
-            score = result_score
-        else:
-            # Fallback: converter para float
-            score = float(result_score)
-        
-        
-        print(f"\n Acurácia no testset: {score:.2%}")
-        
-        # Mostrar exemplo prático
+        # Mostrar exemplo
         self._show_example_prediction()
         
     def save_checkpoint(self, filename="sentiment_mipro_final.json"):

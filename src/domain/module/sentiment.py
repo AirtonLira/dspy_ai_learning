@@ -9,8 +9,7 @@ class SentimentClassifier(dspy.Module):
     def forward(self, text: str = None, **kwargs):
         if text is None and 'text' in kwargs:
             text = kwargs['text']
-            
-            
+                       
         # Garantir que sempre retorna um Prediction válido
         try:
             result = self.predict(text=text)

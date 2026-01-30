@@ -1,7 +1,6 @@
 import dspy
 import os
 from utils.rate_limiter import RateLimitedLM, gemini_rate_limiter
-from utils.rate_limiter_callback import RateLimitCallback
 
 class LLMConfig:
     _instance = None
@@ -16,7 +15,6 @@ class LLMConfig:
             if llm_local_mode == "true":
                 llm = dspy.LM(
                     model="ollama/qwen2.5:0.5b",
-            
                     chat=True,
                     max_tokens=256,
                     local_mode=True
@@ -40,14 +38,9 @@ class LLMConfig:
                 print("Usando modelo remoto (Liquid LFM 2.5).")
             
             print(f"--- Inicializando conexão com Ollama ({model}) ---")
-            # Envolver o LM com o wrapper que aplica rate limiting por chamada.
-            wrapped = RateLimitedLM(llm, limiter=gemini_rate_limiter)
-            cls._instance = wrapped
-            
-            
-            # Adicionar rate limiting via callback
-            rate_limiter = RateLimitCallback(requests_per_minute=10)
-            dspy.settings.configure(lm=cls._instance, callbacks=[rate_limiter])
+        
+            dspy.settings.configure(lm=llm)
+            cls._instance = llm
             
         return cls._instance
 
