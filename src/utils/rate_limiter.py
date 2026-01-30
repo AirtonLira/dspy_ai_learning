@@ -5,8 +5,10 @@ from collections import deque
 from datetime import datetime, timedelta
 import threading
 
+import dspy
 
-class RateLimiter:
+
+class RateLimiter(dspy.LM):
     """
     Rate limiter para Gemini API (free tier: 5 req/min).
     

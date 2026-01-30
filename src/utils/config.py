@@ -1,6 +1,7 @@
 import dspy
 import os
 from utils.rate_limiter import RateLimitedLM, gemini_rate_limiter
+from utils.rate_limiter_callback import RateLimitCallback
 
 class LLMConfig:
     _instance = None
@@ -42,7 +43,12 @@ class LLMConfig:
             # Envolver o LM com o wrapper que aplica rate limiting por chamada.
             wrapped = RateLimitedLM(llm, limiter=gemini_rate_limiter)
             cls._instance = wrapped
-            dspy.settings.configure(lm=cls._instance)
+            
+            
+            # Adicionar rate limiting via callback
+            rate_limiter = RateLimitCallback(requests_per_minute=10)
+            dspy.settings.configure(lm=cls._instance, callbacks=[rate_limiter])
+            
         return cls._instance
 
 # Atalho para facilitar o uso
