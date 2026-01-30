@@ -1,8 +1,8 @@
+import os
 import dspy
 from dspy.teleprompt import MIPROv2
-from domain import dataset
 from domain.module.sentiment import SentimentClassifier
-from utils.rate_limiter import gemini_rate_limiter
+from domain.evaluation.sentiment_eval import sentiment_dataset_train, sentiment_accuracy
 
 
 from pathlib import Path
@@ -12,13 +12,13 @@ from dspy.evaluate import Evaluate
 RESULTS_DIR = Path("results")
 RESULTS_DIR.mkdir(exist_ok=True)
 
-RESULTS_FILE = RESULTS_DIR 
+RESULTS_FILE = RESULTS_DIR / "dspy_results.txt"
 
 
 class SentimentMiproManager:
     def __init__(self):
         
-        dataset = sentiment_d taset_train()
+        dataset = sentiment_dataset_train()
         self.base_program = SentimentClassifier()
 
         if not dataset:
@@ -34,21 +34,29 @@ class SentimentMiproManager:
         return example.sentiment.lower() == pred.sentiment.lower()
 
 
-    @gemini_rate_limiter
-    def run_mipro_optimization(self,num_candidates=3):
-        
+    def run_mipro_optimization(self, num_candidates=3):
+        # Carregar configurações de throttling/execução via env vars (podem ser ajustadas)
+        dry_run = os.getenv("DSPY_MIPRO_DRY_RUN", "false").lower() == "true"
+
+        print(f"MIPROv2 config -> dry_run={dry_run}, rate_limit: 1 req/60s")
+
+        if dry_run:
+            print("Dry-run ativado: pulando otimização pesada do MIPROv2.")
+            return None
+
+        # MIPROv2 com configuração minimalista para reduzir chamadas à API
         teleprompter = MIPROv2(
-                prompt_model=dspy.settings.lm, 
-                task_model=dspy.settings.lm, 
-                metric=self._metric,            
+                prompt_model=dspy.settings.lm,
+                task_model=dspy.settings.lm,
+                metric=self._metric,
                 auto="light"
             )
-        
+
         compiled_program = teleprompter.compile(
                 self.base_program,
                 trainset=self.trainset,
-                max_bootstrapped_demos=2,
-                max_labeled_demos=2
+                max_bootstrapped_demos=0,
+                max_labeled_demos=0
         )
         
         
@@ -88,8 +96,8 @@ class SentimentMiproManager:
         self._show_example_prediction()
         
     def save_checkpoint(self, filename="sentiment_mipro_final.json"):
-            if self.compiled_program:
-                self.compiled_program.save(RESULTS_FILE.parent / "results/" / filename)
+        if self.compiled_program:
+            self.compiled_program.save(RESULTS_DIR / filename)
                 
     def _show_example_prediction(self):
         """Mostra um exemplo de predição"""
@@ -122,11 +130,11 @@ class SentimentMiproManager:
         print("="*60)
         accuracy = sum(scores) / len(scores)
         log_result(
-                phase="MIPROv2_evaluation_optimized",
-                metric_name="accuracy",
-                metric_value=accuracy,
-                num_examples=len(scores),
-                model_name="gemini/gemini-3-flash-preview",
-                notes="baseline"
-            )
+            phase="MIPROv2_evaluation_optimized",
+            metric_name="accuracy",
+            metric_value=accuracy,
+            num_examples=len(scores),
+            model_name="gemini/gemini-3-flash-preview",
+            notes="baseline"
+        )
         print(f"Acurácia final (otimizada): {accuracy:.2f}")

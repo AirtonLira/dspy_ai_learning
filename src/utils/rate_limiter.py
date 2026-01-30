@@ -1,3 +1,4 @@
+import os
 import time
 import functools
 from collections import deque
@@ -115,4 +116,34 @@ class RateLimiter:
 
 
 # Singleton global para usar em qualquer lugar
-gemini_rate_limiter = RateLimiter(max_requests=3, window_seconds=60)
+_max_req = int(os.getenv("DSPY_API_MAX_REQ", "1"))
+_window = int(os.getenv("DSPY_API_WINDOW", "30"))
+gemini_rate_limiter = RateLimiter(max_requests=_max_req, window_seconds=_window)
+
+
+class RateLimitedLM:
+    """Wrapper simples para um objeto LLM que aplica rate limiting por chamada.
+
+    Usa o `gemini_rate_limiter` para aguardar entre invocações ao modelo.
+    O wrapper delega qualquer atributo ao objeto subjacente.
+    """
+    def __init__(self, lm, limiter: RateLimiter = gemini_rate_limiter):
+        self._lm = lm
+        self._limiter = limiter
+
+    def __getattr__(self, name):
+        return getattr(self._lm, name)
+
+    def __call__(self, *args, **kwargs):
+        # Garantir que não ultrapassamos a cota antes de cada chamada
+        self._limiter.wait_if_needed()
+        return self._lm(*args, **kwargs)
+
+    # Algumas implementações expõem métodos como `generate` ou `completion`
+    def generate(self, *args, **kwargs):
+        self._limiter.wait_if_needed()
+        return getattr(self._lm, 'generate')(*args, **kwargs)
+
+    def completion(self, *args, **kwargs):
+        self._limiter.wait_if_needed()
+        return getattr(self._lm, 'completion')(*args, **kwargs)

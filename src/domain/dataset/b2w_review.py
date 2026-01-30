@@ -41,9 +41,9 @@ class B2WReviews:
         formatted_examples = []
         for _, row in tqdm(df.iterrows(), total=df.shape[0], desc="Formatting examples"):
             example = Example(
-                review_text=row['text'],
+                text=row['text'],
                 sentiment=row['sentiment']
-            ).with_inputs("review_text")
+            ).with_inputs("text")
             formatted_examples.append(example)
         return formatted_examples
 
