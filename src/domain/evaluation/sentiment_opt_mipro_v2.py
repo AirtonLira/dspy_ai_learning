@@ -53,7 +53,7 @@ class SentimentMiproManager:
         
         # Compilar programa
         compiled_program = teleprompter.compile(
-            self.compiled_program,
+            self.base_program,
             trainset=self.trainset,
             max_bootstrapped_demos=0,
             max_labeled_demos=0
