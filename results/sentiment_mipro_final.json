@@ -4,15 +4,15 @@
     "train": [],
     "demos": [],
     "signature": {
-      "instructions": "Classifica o sentimento de um texto.",
+      "instructions": "Classifica o sentimento de um texto de review em português",
       "fields": [
         {
           "prefix": "Text:",
-          "description": "Texto a ser analisado"
+          "description": "Texto do review do cliente"
         },
         {
           "prefix": "Sentiment:",
-          "description": "retornar somente positivo ou negativo"
+          "description": "Classifique como: positivo, negativo ou neutro"
         }
       ]
     },

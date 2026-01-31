@@ -4,3 +4,11 @@
 2026-01-30T14:39:47.780098;evaluation_optimized;accuracy;0.7949;78;ollama/llama3.1;baseline
 2026-01-30T14:49:11.012788;evaluation_optimized;accuracy;0.7949;78;ollama/llama3.1;baseline
 2026-01-30T14:51:24.811982;evaluation_optimized;accuracy;0.7949;78;ollama/llama3.1;baseline
+2026-01-30T15:51:37.030941;evaluation_optimized;accuracy;0.7949;78;ollama/llama3.1;baseline
+2026-01-30T16:04:52.751989;evaluation;accuracy;0.8500;20;ollama/llama3.1;baseline
+2026-01-30T16:04:55.059658;evaluation_optimized;accuracy;0.7949;78;ollama/llama3.1;baseline
+2026-01-30T16:16:11.327604;evaluation;accuracy;0.8500;20;ollama/llama3.1;baseline
+2026-01-30T18:06:11.448628;evaluation_optimized;accuracy;0.7821;78;ollama/llama3.1;baseline
+2026-01-31T00:09:43.617697;evaluation_optimized;accuracy;0.7821;78;ollama/llama3.1;baseline
+2026-01-31T00:13:41.573769;evaluation_optimized;accuracy;0.7821;78;ollama/llama3.1;baseline
+2026-01-31T15:08:02.501176;MIPROv2_evaluation;accuracy;50.0000;2;gemini/gemini-1.5-flash;Avaliação em testset separado

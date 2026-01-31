@@ -46,12 +46,12 @@ def run_optimization():
    accuracy = sum(scores) / len(scores)
    log_result(
         phase="evaluation_optimized",
-        metric_name="accuracy",
+        metric_name="accuracy_fewshot",
         metric_value=accuracy,
         num_examples=len(scores),
         model_name="ollama/llama3.1",
         notes="baseline"
-    )
+    )   
    print(f"Acurácia final (otimizada): {accuracy:.2f}")
    
    print("\n=== Exemplos Selecionados pelo Otimizador ===\n")
@@ -73,7 +73,14 @@ def run_optimization():
    print(f"O otimizador realizou {len(history)} chamadas ao modelo.")  
    # Ver o primeiro prompt que ele tentou no treino
    if history:
-        print("Primeiro prompt de treino:", history[0]['prompt'])
-        print("Resposta do modelo:", history[0]['response'])
+     # Acessa a primeira escolha, a mensagem e o conteúdo textual
+     resposta_bruta = history[0]['response']
+        
+     # Verifica se é o objeto ModelResponse e extrai o conteúdo
+     if hasattr(resposta_bruta, 'choices'):
+         conteúdo = resposta_bruta.choices[0].message.content
+         print("Resposta formatada:\n", conteúdo)
+     else:
+         print("Resposta:", resposta_bruta)
     
    return optimized_program
